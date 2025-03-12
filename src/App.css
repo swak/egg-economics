@@ -73,17 +73,17 @@ h1 {
 }
 
 .price-prediction-game button:nth-child(1) {
-  background-color: #2196F3; /* Up button: Blue */
+  background-color: #2196F3; /* Higher: Blue */
   color: white;
 }
 
 .price-prediction-game button:nth-child(2) {
-  background-color: #F44336; /* Down button: Red */
+  background-color: #F44336; /* Lower: Red */
   color: white;
 }
 
 .price-prediction-game button:nth-child(3) {
-  background-color: #4CAF50; /* Same button: Green */
+  background-color: #4CAF50; /* Simulate: Green */
   color: white;
 }
 
@@ -137,4 +137,31 @@ h1 {
   .container {
     padding: 10px; /* Less padding on mobile */
   }
+}
+
+/* Vote Record */
+.vote-record {
+  margin: 10px 0;
+}
+
+.vote-bar {
+  display: flex;
+  width: 100%;
+  height: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.higher-bar {
+  background-color: #2196F3; /* Blue for Higher */
+  color: white;
+  text-align: center;
+  line-height: 20px;
+}
+
+.lower-bar {
+  background-color: #F44336; /* Red for Lower */
+  color: white;
+  text-align: center;
+  line-height: 20px;
 }
