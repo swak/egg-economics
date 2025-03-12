@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import EggPriceChart from './components/EggPriceChart';
+import PricePredictionGame from './components/PricePredictionGame';
 
 function App() {
   const [task, setTask] = useState<string>('');
@@ -17,7 +18,6 @@ function App() {
     <div className="app">
       <div className="container">
         <h1>Egg-onomics</h1>
-        {/* Existing To-Do List */}
         <div className="input-section">
           <input
             type="text"
@@ -33,8 +33,8 @@ function App() {
             <li key={index}>{task}</li>
           ))}
         </ul>
-        {/* Add Egg Price Chart */}
         <EggPriceChart />
+        <PricePredictionGame />
       </div>
     </div>
   );
