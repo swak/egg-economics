@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Egg-onomics</h1>
+        <h1>Egg-onomics v.1</h1>
         <p>Track Egg Prices & Predict Trends</p>
       </header>
       <div className="container">
