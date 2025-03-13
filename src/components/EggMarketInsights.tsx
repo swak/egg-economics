@@ -1,7 +1,6 @@
 import React from 'react';
 
 const EggMarketInsights: React.FC = () => {
-  // Mock seasonal trend data (average price per month across years)
   const seasonalTrends = [
     { month: 'Jan', avgPrice: 5.80 },
     { month: 'Feb', avgPrice: 5.90 },
@@ -21,17 +20,28 @@ const EggMarketInsights: React.FC = () => {
     <div className="market-insights">
       <h2>Egg Market Insights</h2>
       <h3>Seasonal Price Trends</h3>
-      <ul>
+      <div className="trends-list">
         {seasonalTrends.map((trend, index) => (
-          <li key={index}>
+          <div key={index} className="trend-item">
             {trend.month}: ${trend.avgPrice.toFixed(2)} (USD/dozen)
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
       <h3>Factors Affecting Egg Prices</h3>
-      <p>
-        <strong>Production Costs:</strong> Feed prices for hens have risen 15% in 2025, driving egg prices up, especially in Q1.
-      </p>
+      <div className="factors-list">
+        <p>
+          <strong>Production Costs:</strong> Feed prices for hens have risen 15% in 2025, driving egg prices up, especially in Q1.
+        </p>
+        <p>
+          <strong>Weather Impacts:</strong> Extreme weather events, like the Midwest floods in early 2025, disrupted supply chains, reducing egg production and increasing prices.
+        </p>
+        <p>
+          <strong>Avian Flu Outbreaks:</strong> An avian flu outbreak in late 2024 culled millions of hens, leading to a 10% drop in egg supply and higher prices in early 2025.
+        </p>
+        <p>
+          <strong>Consumer Demand:</strong> Increased demand during holiday seasons (e.g., Easter and Christmas) often pushes prices up due to higher consumption.
+        </p>
+      </div>
     </div>
   );
 };

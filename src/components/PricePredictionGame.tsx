@@ -5,6 +5,7 @@ interface VoteRecord {
   higher: number;
   lower: number;
   price: number;
+  winner?: string;
 }
 
 const PricePredictionGame: React.FC = () => {
@@ -14,7 +15,6 @@ const PricePredictionGame: React.FC = () => {
   const [simulatedDate, setSimulatedDate] = useState<string>(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
-    // Load initial price and votes
     APIService.getEggPrices().then((data) => {
       const initialPrice = data[data.length - 1].price;
       setCurrentPrice(initialPrice);
@@ -23,50 +23,51 @@ const PricePredictionGame: React.FC = () => {
     loadVoteHistory();
   }, []);
 
-  // Load vote history from local storage
   const loadVoteHistory = () => {
     const history = JSON.parse(localStorage.getItem('voteHistory') || '[]');
     setVoteHistory(history);
   };
 
-  // Save a vote to local storage
   const saveVote = (vote: 'higher' | 'lower') => {
     const votes = { ...nextDayVotes, [vote]: (nextDayVotes[vote] || 0) + 1 };
     setNextDayVotes(votes);
-    // Update local storage for the current simulated date
     const currentDayVotes = { ...votes, price: currentPrice };
     localStorage.setItem(simulatedDate, JSON.stringify(currentDayVotes));
   };
 
-  // Simulate next day's price and store votes
   const simulateNextDay = () => {
     if (!currentPrice) return;
 
-    // Store current day's votes and price in history
     const currentDayVotes = { ...nextDayVotes, price: currentPrice };
     const updatedHistory = [...voteHistory, currentDayVotes];
+    
+    if (updatedHistory.length > 1) {
+      const prevDay = updatedHistory[updatedHistory.length - 2];
+      const currentDay = updatedHistory[updatedHistory.length - 1];
+      const priceIncreased = currentDay.price > prevDay.price;
+      const winner = priceIncreased ? 'higher' : 'lower';
+      updatedHistory[updatedHistory.length - 2] = { ...prevDay, winner };
+    }
+
     setVoteHistory(updatedHistory);
     localStorage.setItem('voteHistory', JSON.stringify(updatedHistory));
 
-    // Simulate next day
     const variation = (Math.random() - 0.5) * 0.2 * currentPrice;
     const newPrice = currentPrice + variation;
     setCurrentPrice(newPrice);
 
-    // Increment simulated date
-    const nextDate = new Date(new Date(simulatedDate).getTime() + 86400000);
-    setSimulatedDate(nextDate.toISOString().split('T')[0]);
+    const nextDate = new Date(new Date(simulatedDate).getTime() + 86400000).toISOString().split('T')[0];
+    setSimulatedDate(nextDate);
 
-    // Reset votes for new day
     setNextDayVotes({ higher: 0, lower: 0, price: newPrice });
-    localStorage.removeItem(simulatedDate); // Clear old day's votes
+    localStorage.removeItem(simulatedDate);
   };
 
   return (
     <div className="price-prediction-game">
       <h2>Price Prediction Game</h2>
       <p>Current Price: ${currentPrice.toFixed(2)}</p>
-      <div>
+      <div className="vote-buttons">
         <button onClick={() => saveVote('higher')}>Higher</button>
         <button onClick={() => saveVote('lower')}>Lower</button>
       </div>
@@ -74,13 +75,14 @@ const PricePredictionGame: React.FC = () => {
       {voteHistory.length > 0 && (
         <div>
           <h3>Vote History</h3>
-          {voteHistory.map((record, index) => {
+          {[...voteHistory].reverse().map((record, index) => {
             const totalVotes = (record.higher || 0) + (record.lower || 0);
             const higherPercent = totalVotes ? ((record.higher / totalVotes) * 100).toFixed(0) : 0;
             const lowerPercent = totalVotes ? ((record.lower / totalVotes) * 100).toFixed(0) : 0;
+            const dayNumber = voteHistory.length - index; // Reverse day numbering
             return (
               <div key={index} className="vote-record">
-                <p>Day {index + 1} Price: ${record.price.toFixed(2)}</p>
+                <p>Day {dayNumber} Price: ${record.price.toFixed(2)}</p>
                 <p>Votes - Higher: {record.higher}, Lower: {record.lower}</p>
                 <div className="vote-bar">
                   <div
@@ -96,6 +98,19 @@ const PricePredictionGame: React.FC = () => {
                     {lowerPercent}% Lower
                   </div>
                 </div>
+                {record.winner && (
+                  <div className="winner-wrapper">
+                    <div
+                      className={`winner ${record.winner}-winner`}
+                      style={{
+                        width: record.winner === 'higher' ? `${higherPercent}%` : `${lowerPercent}%`,
+                        marginLeft: record.winner === 'higher' ? '0' : `${higherPercent}%`,
+                      }}
+                    >
+                      Winner: {record.winner === 'higher' ? 'Higher' : 'Lower'} voters
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
